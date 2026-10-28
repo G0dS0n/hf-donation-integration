@@ -1,0 +1,35 @@
+
+Simulated CRM running at http://localhost:4010
+Processing the 5 website payloads in the order they were received...
+
+
+  [09:14:56] payload 1 received (donation 12345)
+✔ 12345  DELIVERED       CRM-88300 · $150.00 · APPEAL2026 · j***@email.com
+
+  [09:15:02] payload 3 received (donation 12347)
+✔ 12347  DELIVERED       CRM-88301 · $50.00 · APPEAL2026 · a***@email.com (Other amount used)
+
+  [09:15:38] payload 2 received (donation 12345)
+↺ 12345  DUPLICATE       already received - skipped, so no second receipt and no double-counting
+
+  [09:41:11] payload 4 received (donation 12348)
+✖ 12348  NEEDS_REVIEW    email "sam.lee@email" is not a valid address - sent to Supporter Care review queue
+
+  [09:58:29] payload 5 received (donation 12350)
+✔ 12350  DELIVERED       CRM-88302 · $80.00 · APPEAL2026 · p***@email.com
+
+Summary
+  Delivered to CRM (receipt sent): 3
+  Duplicates prevented:            1
+  Needs review (Supporter Care):   1
+  Dead-letter (replay later):      0
+  Silently lost:                   0
+    review: 12348 - email "sam.lee@email" is not a valid address
+
+Reconciliation (payment provider vs CRM)
+  Approved payments: 4  total $305.00
+  Records in CRM:    3  total $280.00
+  ⚠ ALERT: 12348 ($25.00) approved but not in CRM - known, waiting in review queue
+
+Structured log written to output/donations.log.jsonl
+

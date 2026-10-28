@@ -1,0 +1,25 @@
+{
+  "name": "hf-donation-integration",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Heart Foundation Integration Engineer assessment - website donations to CRM",
+  "type": "module",
+  "scripts": {
+    "start": "tsx src/run.ts",
+    "scenarios": "tsx src/scenarios.ts",
+    "crm": "tsx src/mock-crm/standalone.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^4.22.3"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.25",
+    "@types/node": "^26.6.5",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  }
+}

@@ -1,0 +1,73 @@
+=== 1. Token expiry  (log: 401 at 10:00, 11:00 and 12:01 - 12352, 12371, 12384 lost) 
+CRM token lasts 3s here (60 min in real life). We refresh 1s before expiry.
+
+✔ 12400  DELIVERED       CRM-88300 · $35.00 · APPEAL2026 · s***@email.com
+✔ 12401  DELIVERED       CRM-88301 · $35.00 · APPEAL2026 · s***@email.com
+✔ 12402  DELIVERED       CRM-88302 · $35.00 · APPEAL2026 · s***@email.com
+
+PASS → 3/3 delivered first time, 2 token refreshes, no 401s - the token was renewed BEFORE it expired.
+
+=== 1b. Safety net: CRM rejects a token unexpectedly (e.g. revoked) =======
+✔ 12403  DELIVERED       CRM-88300 · $35.00 · APPEAL2026 · s***@email.com
+… 12404  RETRY           401 token rejected - refreshing token and retrying once
+✔ 12404  DELIVERED       CRM-88301 · $35.00 · APPEAL2026 · s***@email.com
+
+PASS → 401 handled: donation 12404 DELIVERED on attempt 2 after a token refresh (2 tokens issued).
+
+=== 2. Campaign spike  (log: 429 at 12:03 - 12390, 12391, 12392 lost) =====
+CRM allows 10 requests per 3s here. 20 donations arrive at once and our limiter is switched
+off to force the CRM to push back - showing Retry-After is honoured.
+
+✔ 12405  DELIVERED       CRM-88300 · $10.00 · APPEAL2026 · s***@email.com
+✔ 12406  DELIVERED       CRM-88301 · $11.00 · APPEAL2026 · s***@email.com
+✔ 12407  DELIVERED       CRM-88302 · $12.00 · APPEAL2026 · s***@email.com
+✔ 12408  DELIVERED       CRM-88303 · $13.00 · APPEAL2026 · s***@email.com
+✔ 12409  DELIVERED       CRM-88304 · $14.00 · APPEAL2026 · s***@email.com
+✔ 12410  DELIVERED       CRM-88305 · $15.00 · APPEAL2026 · s***@email.com
+✔ 12411  DELIVERED       CRM-88306 · $16.00 · APPEAL2026 · s***@email.com
+✔ 12412  DELIVERED       CRM-88307 · $17.00 · APPEAL2026 · s***@email.com
+✔ 12413  DELIVERED       CRM-88308 · $18.00 · APPEAL2026 · s***@email.com
+✔ 12414  DELIVERED       CRM-88309 · $19.00 · APPEAL2026 · s***@email.com
+… 12415  RETRY           429 CRM busy - waiting 3s (Retry-After), then retrying
+✔ 12415  DELIVERED       CRM-88310 · $20.00 · APPEAL2026 · s***@email.com
+✔ 12416  DELIVERED       CRM-88311 · $21.00 · APPEAL2026 · s***@email.com
+✔ 12417  DELIVERED       CRM-88312 · $22.00 · APPEAL2026 · s***@email.com
+✔ 12418  DELIVERED       CRM-88313 · $23.00 · APPEAL2026 · s***@email.com
+✔ 12419  DELIVERED       CRM-88314 · $24.00 · APPEAL2026 · s***@email.com
+✔ 12420  DELIVERED       CRM-88315 · $25.00 · APPEAL2026 · s***@email.com
+✔ 12421  DELIVERED       CRM-88316 · $26.00 · APPEAL2026 · s***@email.com
+✔ 12422  DELIVERED       CRM-88317 · $27.00 · APPEAL2026 · s***@email.com
+✔ 12423  DELIVERED       CRM-88318 · $28.00 · APPEAL2026 · s***@email.com
+✔ 12424  DELIVERED       CRM-88319 · $29.00 · APPEAL2026 · s***@email.com
+
+PASS → 20/20 delivered, 1 had to wait out a 429 first, 0 lost.
+  In normal running the 90/min limiter stops the CRM limit being hit; Retry-After is the safety net.
+
+=== 3. CRM temporarily unavailable  (log: 503 at 12:03:14 - 12395 lost) ===
+… 12425  RETRY           503 - CRM unavailable, retry 1/4 in 0.3s
+… 12425  RETRY           503 - CRM unavailable, retry 2/4 in 0.5s
+✔ 12425  DELIVERED       CRM-88300 · $40.00 · APPEAL2026 · s***@email.com
+
+PASS → two 503s retried with exponential backoff: DELIVERED on attempt 3.
+
+=== 3b. Longer outage: retries used up -> dead-letter -> replay when CRM recovers 
+… 12426  RETRY           503 - CRM unavailable, retry 1/4 in 0.3s
+… 12426  RETRY           503 - CRM unavailable, retry 2/4 in 0.7s
+… 12426  RETRY           503 - CRM unavailable, retry 3/4 in 1.0s
+… 12426  RETRY           503 - CRM unavailable, retry 4/4 in 2.9s
+✖ 12426  DEAD_LETTER     still failing after all retries - CRM unavailable - moved to dead-letter queue, ALERT raised, will be replayed
+
+   Dead-letter queue now holds 1 donation. CRM recovers...
+• 12426  INFO            replaying from dead-letter queue
+✔ 12426  DELIVERED       CRM-88300 · $60.00 · APPEAL2026 · s***@email.com
+
+PASS → dead-lettered after 5 attempts, then replayed: DELIVERED. Nothing dropped.
+
+=== 4. Replay is safe  (idempotency: 409 = already done) ==================
+✔ 12427  DELIVERED       CRM-88300 · $100.00 · APPEAL2026 · s***@email.com
+• 12427  INFO            recovery replay requested
+✔ 12427  ALREADY_IN_CRM  already exists in CRM - treated as success, no duplicate receipt
+
+PASS → replay returned ALREADY_IN_CRM; CRM still holds 1 record for 12427, so no second receipt.
+
+All scenarios passed. Structured log: output/donations.log.jsonl

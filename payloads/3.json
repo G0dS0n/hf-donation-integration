@@ -1,0 +1,11 @@
+{
+  "donationId": "12347",
+  "firstName": "Amir",
+  "lastName": "Haddad",
+  "email": "amir.haddad@email.com",
+  "amount": null,
+  "otherAmount": "50.00",
+  "campaign": "Appeal2026",
+  "paymentStatus": "approved",
+  "submittedAt": "2026-10-01T09:15:01+10:00"
+}

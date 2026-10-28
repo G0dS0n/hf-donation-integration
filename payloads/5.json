@@ -1,0 +1,11 @@
+{
+  "donationId": "12350",
+  "firstName": "Priya",
+  "lastName": "Nair",
+  "email": "priya.nair@email.com",
+  "amount": 80,
+  "otherAmount": null,
+  "campaign": "appeal2026",
+  "paymentStatus": "approved",
+  "submittedAt": "2026-10-01T09:58:28+10:00"
+}

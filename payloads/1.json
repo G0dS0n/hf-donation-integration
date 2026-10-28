@@ -1,0 +1,11 @@
+{
+  "donationId": "12345",
+  "firstName": "Jane",
+  "lastName": "Citizen",
+  "email": "jane@email.com",
+  "amount": 150,
+  "otherAmount": null,
+  "campaign": "Appeal2026",
+  "paymentStatus": "approved",
+  "submittedAt": "2026-10-01T09:14:55+10:00"
+}

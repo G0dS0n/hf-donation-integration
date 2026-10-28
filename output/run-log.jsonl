@@ -1,0 +1,5 @@
+{"time":"2026-10-28T11:40:47.855Z","event":"DELIVERED","donationId":"12345","message":"CRM-88300 · $150.00 · APPEAL2026 · j***@email.com","attempts":1,"crmId":"CRM-88300"}
+{"time":"2026-10-28T11:40:48.449Z","event":"DELIVERED","donationId":"12347","message":"CRM-88301 · $50.00 · APPEAL2026 · a***@email.com (Other amount used)","attempts":1,"crmId":"CRM-88301"}
+{"time":"2026-10-28T11:40:48.449Z","event":"DUPLICATE","donationId":"12345","message":"already received - skipped, so no second receipt and no double-counting"}
+{"time":"2026-10-28T11:40:48.449Z","event":"NEEDS_REVIEW","donationId":"12348","message":"email \"sam.lee@email\" is not a valid address - sent to Supporter Care review queue","attempts":0,"reason":"email \"sam.lee@email\" is not a valid address"}
+{"time":"2026-10-28T11:40:49.114Z","event":"DELIVERED","donationId":"12350","message":"CRM-88302 · $80.00 · APPEAL2026 · p***@email.com","attempts":1,"crmId":"CRM-88302"}
