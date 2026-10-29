@@ -1,6 +1,6 @@
 
 Simulated CRM running at http://localhost:4010
-Processing the 5 website payloads in the order they were received...
+Processing 5 payload file(s) from payloads/ ...
 
 
   [09:14:56] payload 1 received (donation 12345)
