@@ -63,7 +63,14 @@ export class DonationProcessor {
   }
 
   /** Step 1 - receive and store. Returns what the website would be told. */
-  receive(payload: WebsitePayload): "accepted" | "duplicate" {
+  receive(payload: WebsitePayload): "accepted" | "duplicate" | "rejected" {
+    // Anything that isn't a JSON object can't be a donation - record it rather than crash.
+    if (payload === null || typeof payload !== "object" || Array.isArray(payload)) {
+      const result: DonationResult = { donationId: "(no id)", outcome: "NEEDS_REVIEW", attempts: 0, reason: "payload is not a JSON object" };
+      this.results.push(result);
+      log("NEEDS_REVIEW", "(no id)", "payload is not a JSON object - sent to review");
+      return "rejected";
+    }
     const id = String(payload.donationId ?? "");
     if (id && this.accepted.has(id)) {
       // e.g. payload 2: the website resent 12345 42 seconds later.
@@ -106,7 +113,7 @@ export class DonationProcessor {
 
   /** Step 3 - validate, transform, send, handle the response. */
   private async process(payload: WebsitePayload): Promise<DonationResult> {
-    const id = String(payload.donationId);
+    const id = payload.donationId ? String(payload.donationId) : "(no id)";
 
     // 3a. Validate - bad data never reaches the CRM.
     const problems = validatePayload(payload);
